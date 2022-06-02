@@ -47,7 +47,7 @@
       </div>
       <div class="col-3 ">
         <button type="button" class="btn btn-success " style="margin-left: 45%;" data-bs-toggle="modal"
-          data-bs-target="#exampleModal" data-bs-whatever="@mdo"><b> + </b></button>
+          data-bs-target="#exampleModal" data-bs-whatever="@mdo"  @click="tambahFlash"><b> + </b></button>
       </div>
       <div class="col-12 mt-2">
         <input type="text" class="form-control text-success" id="recipient-name" placeholder="Cari..." v-model="cari">
@@ -60,7 +60,7 @@
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel">Input Data</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-              @click="editData = false"></button>
+               @click="tambahFlash"></button>
           </div>
           <div class="modal-body">
             <form>
@@ -305,6 +305,16 @@
           }
         },
         methods: {
+           tambahFlash(){
+            this.editData = false
+            this.seksi = ''
+            this.tgl= ''
+            this.permasalahan= ''
+            this.isu = ''
+            this.upaya = ''
+            this.statusFlash = ''
+
+          },
           pilihSeksi(x) {
             this.seksiDipilih = x;
           },
