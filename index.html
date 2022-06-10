@@ -36,7 +36,7 @@
 <body>
     <div class="container" id="app">
         <h1 @click="pilihSeksi('')">Flash Report</h1>
-
+  <!-- {{dataFlash}} -->
 <!-- tambah progress -->
         <div class="tambahProgres row" v-if="tambahP">
                 <div class="row">
@@ -207,19 +207,19 @@
             <div class="row">
                 <div class="col-9">
                     <button type="button" class="btn btn-outline-primary mt-1" @click="pilihSeksi('UMUM')">
-                        <b>UMUM</b>
+                        <b>UMUM ({{jUmum}})</b>
                     </button>
                     <button type="button" class="btn btn-outline-secondary mt-1" @click="pilihSeksi('P dan KI')">
-                        <b> P & KI</b>
+                        <b> P & KI ({{jPnki}})</b>
                     </button>
                     <button type="button" class="btn btn-outline-success mt-1" @click="pilihSeksi('VAAS')">
-                        <b> VAAS </b>
+                        <b> VAAS ({{jVaas}}) </b>
                     </button>
                     <button type="button" class="btn btn-outline-warning mt-1" @click="pilihSeksi('LPTI')">
-                        <b> LPTI </b>
+                        <b> LPTI ({{jLpti}})</b>
                     </button>
                     <button type="button" class="btn btn-outline-info mt-1" @click="pilihSeksi('REKON')">
-                        <b> REKON </b>
+                        <b> REKON ({{jReko}})</b>
                     </button>
                 </div>
                 <div class="col-3 ">
@@ -227,6 +227,9 @@
                         data-bs-whatever="@mdo" @click="tambahFlash">
                         <b> + </b>
                     </button>
+                    <button @click="ambilHistory" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="untuk menampilkan data selesai" v-if="Selesai">Selesai</button>
+                    <button @click="GetDataFlash" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="untuk menampilkan data on progress " v-else>On Progress</button>
+                    
                 </div>
                 <div class="col-12 mt-2">
                     <input type="text" class="form-control text-success" id="recipient-name" placeholder="Cari..." v-model="cari">
@@ -262,12 +265,15 @@
                                     <input type="date" class="form-control" placeholder="Tanggal" v-model="tgl">
                                 </div>
                                 <div class="mb-3">
+                                    <div  class="form-text">Permasalahan</div>
                                     <input type="text" class="form-control" placeholder="Permasalahan" v-model="permasalahan">
                                 </div>
                                 <div class="mb-3">
+                                    <div  class="form-text">Upaya</div>
                                     <textarea class="form-control" placeholder="upaya" v-model="isu"></textarea>
                                 </div>
                                 <div class="mb-3">
+                                    <div  class="form-text">Hasil</div>
                                     <textarea class="form-control" placeholder="hasil" v-model="upaya"></textarea>
                                 </div>
                                 <div class="mb-3">
@@ -321,15 +327,15 @@
                                 <th scope="col">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if="dataFlash.length > 0">
                             <tr v-for="flash,index in HasilCari" >
                                 <th scope="row">{{index+1}}</th>
                                 <td>{{flash.tgl}}</td>
                                 <td>{{flash.seksi}}</td>
-                                <td @click="klikDetail(flash)">{{flash.permasalahan}}</td>
-                                <td @click="klikDetail(flash)">{{flash.isu}}</td>
-                                <td @click="klikDetail(flash)">{{flash.upaya}}</td>
-                                <td @click="klikDetail(flash)">{{flash.statusFlash}}</td>
+                                <td  >{{flash.permasalahan}}</td>
+                                <td style="cursor: pointer;" @click="klikDetail(flash)"  class="text-primary"  data-bs-toggle="tooltip" data-bs-placement="top" title="klik untuk melihat/menambah detail progress">{{flash.isu}}</td>
+                                <td >{{flash.upaya}}</td>
+                                <td >{{flash.statusFlash}}</td>
                                 <td>
                                     <h5 class="" style="margin-bottom: 0px;">
                                         <button class="btn btn-outline btn-xs" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" @click="editFlash(flash, index)">
@@ -411,6 +417,7 @@
                         progres: '',
                         dataProgress: [],
                         progress1:null,
+                        Selesai:true,
 
 
 
@@ -419,6 +426,26 @@
                 },
 
                 computed: {
+                  jUmum(){
+                    const count = this.dataFlash.reduce((acc, cur) => cur.seksi === 'UMUM' ? ++acc : acc, 0);
+                    return count;
+                  },
+                                    jPnki(){
+                    const count = this.dataFlash.reduce((acc, cur) => cur.seksi === 'P dan KI' ? ++acc : acc, 0);
+                    return count;
+                  },
+                                    jVaas(){
+                    const count = this.dataFlash.reduce((acc, cur) => cur.seksi === 'VAAS' ? ++acc : acc, 0);
+                    return count;
+                  },
+                                    jLpti(){
+                    const count = this.dataFlash.reduce((acc, cur) => cur.seksi === 'LPTI' ? ++acc : acc, 0);
+                    return count;
+                  },
+                                    jReko(){
+                    const count = this.dataFlash.reduce((acc, cur) => cur.seksi === 'REKON' ? ++acc : acc, 0);
+                    return count;
+                  },
                     TaskAktif: function () {
                         let aktif = this.tasks.filter(product => product.status != 2)
                         let aktip = aktif.sort(function (a, b) {
@@ -527,6 +554,7 @@
 
                     },
                     pilihSeksi(x) {
+                        this.tambahP = false;
                         this.seksiDipilih = x;
                     },
                     simpanFlash() {
@@ -905,7 +933,8 @@
 
 
                     GetDataFlash() {
-                        this.tasks = [];
+                        this.dataFlash = [];
+                        this.Selesai = true;
 
                         // var url ="https://script.google.com/macros/s/AKfycbyc7wzSrUGxQhcBN5EfVC-rNRj3wncZJOVTWAChXtSwnrHkGjoaoI91bggme_fUOIP9/exec?action=read&table=query";
                         var url = "https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=read&table=Qdata";
@@ -916,7 +945,19 @@
                             app.dataFlash = json.data;
                         });
                     },
+                    ambilHistory(){
+                        this.dataFlash = [];
+                        this.Selesai = false;
 
+                        // var url ="https://script.google.com/macros/s/AKfycbyc7wzSrUGxQhcBN5EfVC-rNRj3wncZJOVTWAChXtSwnrHkGjoaoI91bggme_fUOIP9/exec?action=read&table=query";
+                        var url = "https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=read&table=history";
+
+
+                        $.getJSON(url, function (json) {
+                            // console.log(json.data);
+                            app.dataFlash = json.data;
+                        });
+                    },
 
                     GetDataProgress() {
                         this.dataProgress = [];
