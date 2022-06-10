@@ -2,651 +2,966 @@
 <html lang="en">
 
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Required Icon -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Required Icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
 
 
-  <!-- development version, includes helpful console warnings -->
-  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- development version, includes helpful console warnings -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
-  <title>Flash Harian</title>
+    <title>Flash Harian</title>
 
-  <style>
-    .fade-enter-active,
-    .fade-leave-active {
-      transition: opacity .5s;
-    }
+    <style>
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: opacity .5s;
+        }
 
-    .fade-enter,
-    .fade-leave-to
+        .fade-enter,
+        .fade-leave-to
+        /* .fade-leave-active below version 2.1.8 */
 
-    /* .fade-leave-active below version 2.1.8 */
-      {
-      opacity: 0;
-    }
-  </style>
+            {
+            opacity: 0;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="container" id="app">
-    <h1 @click="pilihSeksi('')">Flash Harian</h1>
+    <div class="container" id="app">
+        <h1 @click="pilihSeksi('')">Flash Report</h1>
 
-    <div class="row">
-      <div class="col-9">
-        <button type="button" class="btn btn-outline-primary" @click="pilihSeksi('UMUM')"><b>UMUM</b></button>
-        <button type="button" class="btn btn-outline-secondary" @click="pilihSeksi('P dan KI')"><b> P & KI</b></button>
-        <button type="button" class="btn btn-outline-success" @click="pilihSeksi('VAAS')"><b> VASS </b></button>
-        <button type="button" class="btn btn-outline-warning" @click="pilihSeksi('LPTI')"> <b> LPTI </b></button>
-        <button type="button" class="btn btn-outline-info" @click="pilihSeksi('REKON')"> <b> REKON </b></button>
-      </div>
-      <div class="col-3 ">
-        <button type="button" class="btn btn-success " style="margin-left: 45%;" data-bs-toggle="modal"
-          data-bs-target="#exampleModal" data-bs-whatever="@mdo"><b> + </b></button>
-      </div>
-      <div class="col-12 mt-2">
-        <input type="text" class="form-control text-success" id="recipient-name" placeholder="Cari..." v-model="cari">
-      </div>
-    </div>
+<!-- tambah progress -->
+        <div class="tambahProgres row" v-if="tambahP">
+                <div class="row">
+                    <div class="col-11"></div>
+                    <div class="col-1">
+                        <button type="button" class="btn-close btn-danger " data-bs-dismiss="modal" aria-label="Close" @click="tambahP = false"></button>
+                    </div>
+                </div>
+                <h1></h1>
+                <div class="col-12 ">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Tanggal</th>
+                                <th scope="col">Seksi</th>
+                                <th scope="col">Permasalahan</th>
+                                <th scope="col">Upaya</th>
+                                <th scope="col">Hasil</th>
+                                <th scope="col">Status</th>
+                                <!-- <th scope="col">Action</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">#</th>
+                                <td>{{flash1.tgl}}</td>
+                                <td>{{flash1.seksi}}</td>
+                                <td>{{flash1.permasalahan}}</td>
+                                <td>{{flash1.isu}}</td>
+                                <td>{{flash1.upaya}}</td>
+                                <td>{{flash1.statusFlash}}</td>
+                                <!-- <td>
+                                    <h5 class="" style="margin-bottom: 0px;">
+                                        <button class="btn btn-outline btn-xs" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" @click="editFlash(flash, index)">
+                                            <i class="bi bi-pencil text-primary"></i>
+                                        </button>
+                                        <button class="btn btn-outline btn-xs" @click="hapusFlash(flash, index)">
+                                            <i class="bi bi-trash text-danger"></i>
+                                        </button>
+                                    </h5>
+                                </td> -->
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Input Data</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-              @click="editData = false"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <div class="input-group">
-                  <span class="input-group-text">Seksi</span>
-                  <select class="form-select" aria-label="Default select example" v-model="seksi">
-                    <!-- <option value="UMUM" selected>Open this select menu</option> -->
-                    <option value="UMUM" selected>UMUM</option>
-                    <option value="P dan KI">P dan KI</option>
-                    <option value="VAAS">VAAS</option>
-                    <option value="LPTI">LPTI</option>
-                    <option value="REKON">REKON</option>
-                  </select>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="col-12">
+
+                        <div class="row">
+                            <!-- <div class="col-10"></div>
+                            <div class="col-2">
+                                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false"
+                                    aria-controls="collapseExample">
+                                    Rekam Progress
+                                </button>
+                            </div>                        
+                            <div class="col-12">
+                                    <div class="collapse mt-2" id="collapseExample">
+                                        <div class="card card-body">
+                                            <div class="row">
+                                                <div class="col-4">
+                                                    <div class="input-group mb-3">
+                                                        <span class="input-group-text" id="basic-addon1">tanggal</span>
+                                                        <input v-model="tglProgres" type="date" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                                                    </div>
+                                                </div>
+                                            </div>
+        
+                                            <div class="input-group">
+                                                <span class="input-group-text">Progres</span>
+                                                <textarea v-model="progres" class="form-control" aria-label="With textarea"></textarea>
+                                            </div>
+        
+                                            <button type="button" class="btn btn-primary mt-3" @click="simpanProgress">Simpan Progress</button>
+                                        </div>
+                                    </div>
+        
+                                </div> -->
+
+
+
+                            <div class="col-9"></div>
+                            <div class="col-3">
+                                <button type="button" class="btn btn-primary mr-0" data-bs-toggle="modal" data-bs-target="#progress" @click="tglProgres = ''; progres = ''; ">
+                                    Rekam Progress
+                                </button>
+                            </div>
+                            <div class="col-12">
+                                <!-- Modal -->
+                                <div class="modal fade" id="progress" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Rekam Progress</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="editData = false;"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                    <div class="row">
+                                                            <div class="col-6">
+                                                                <div class="input-group mb-3">
+                                                                    <span class="input-group-text" id="basic-addon1">tanggal</span>
+                                                                    <input v-model="tglProgres" type="date" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                    
+                                                        <div class="input-group">
+                                                            <span class="input-group-text">Progres</span>
+                                                            <textarea v-model="progres" class="form-control" aria-label="With textarea"></textarea>
+                                                        </div>
+                                                        <!--                 
+                                                        <button type="button" class="btn btn-primary mt-3" @click="simpanProgress">Simpan Progress</button> -->
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" @click="editData = false;" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary" v-if="editData" @click="updateProgress" data-bs-dismiss="modal">Update Progress</button>
+                                                <button type="button" class="btn btn-primary" v-else @click="simpanProgress" data-bs-dismiss="modal">Simpan Progress</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <h1 class="text-primary">Progress Upaya</h1>
+                    <!-- {{FilterProgress}} -->
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Upaya</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr v-for="flash,index in FilterProgress">
+                                <th scope="row">{{index+1}}</th>
+                                <td style="width:9%;">{{flash.tglprogress}}</td>
+                                <td style="width:76%;">{{flash.progress}}</td>
+                                <td style="width:10%;">
+                                        <button class="btn btn-outline btn-xs" data-bs-toggle="modal" data-bs-target="#progress" data-bs-whatever="@mdo" @click="editProgress(flash, index)">
+                                                <i class="bi bi-pencil text-primary"></i>
+                                            </button>
+                                            <button class="btn btn-outline btn-xs" @click="hapusProgress(flash, index)">
+                                                <i class="bi bi-trash text-danger"></i>
+                                            </button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                    <!-- <ul>
+                        <li v-for="flash,index in dataProgress">
+                            <span>{{flash.tglprogress}}</span> - <span>{{flash.progress}}</span>
+                        </li>
+                    </ul> -->
+
 
                 </div>
+        </div>
+<!-- tambah progress -->
 
-                <!-- <input type="text" class="form-control" id="recipient-name" placeholder="Nama Seksi" v-model="seksi"> -->
-              </div>
-              <div class="mb-3">
-                <input type="date" class="form-control" placeholder="Tanggal" v-model="tgl">
-              </div>
-              <div class="mb-3">
-                <input type="text" class="form-control" placeholder="Permasalahan" v-model="permasalahan">
-              </div>
-              <div class="mb-3">
-                <textarea class="form-control" placeholder="isu" v-model="isu"></textarea>
-              </div>
-              <div class="mb-3">
-                <textarea class="form-control" placeholder="upaya" v-model="upaya"></textarea>
-              </div>
-              <div class="mb-3">
-                <!-- <input type="text" class="form-control" id="recipient-name" placeholder="status" v-model="statusFlash"> -->
-                <div class="input-group">
-                  <span class="input-group-text">Status</span>
-                  <select class="form-select" aria-label="Default select example" v-model="statusFlash">
-                    <!-- <option value="UMUM" selected>Open this select menu</option> -->
-                    <option value="On Progres">On Progres</option>
-                    <option value="Selesai">Selesai</option>
+<!-- tampilan utama -->
+        <div class="utama" v-else>
+            <div class="row">
+                <div class="col-9">
+                    <button type="button" class="btn btn-outline-primary mt-1" @click="pilihSeksi('UMUM')">
+                        <b>UMUM</b>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary mt-1" @click="pilihSeksi('P dan KI')">
+                        <b> P & KI</b>
+                    </button>
+                    <button type="button" class="btn btn-outline-success mt-1" @click="pilihSeksi('VAAS')">
+                        <b> VAAS </b>
+                    </button>
+                    <button type="button" class="btn btn-outline-warning mt-1" @click="pilihSeksi('LPTI')">
+                        <b> LPTI </b>
+                    </button>
+                    <button type="button" class="btn btn-outline-info mt-1" @click="pilihSeksi('REKON')">
+                        <b> REKON </b>
+                    </button>
+                </div>
+                <div class="col-3 ">
+                    <button type="button" class="btn btn-success " style="margin-left: 45%;" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        data-bs-whatever="@mdo" @click="tambahFlash">
+                        <b> + </b>
+                    </button>
+                </div>
+                <div class="col-12 mt-2">
+                    <input type="text" class="form-control text-success" id="recipient-name" placeholder="Cari..." v-model="cari">
+                </div>
+            </div>
 
-                    <!-- <option value="VAAS">VAAS</option>
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Input Data</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="tambahFlash"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Seksi</span>
+                                        <select class="form-select" aria-label="Default select example" v-model="seksi">
+                                            <!-- <option value="UMUM" selected>Open this select menu</option> -->
+                                            <option value="UMUM" selected>UMUM</option>
+                                            <option value="P dan KI">P dan KI</option>
+                                            <option value="VAAS">VAAS</option>
+                                            <option value="LPTI">LPTI</option>
+                                            <option value="REKON">REKON</option>
+                                        </select>
+
+                                    </div>
+
+                                    <!-- <input type="text" class="form-control" id="recipient-name" placeholder="Nama Seksi" v-model="seksi"> -->
+                                </div>
+                                <div class="mb-3">
+                                    <input type="date" class="form-control" placeholder="Tanggal" v-model="tgl">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" placeholder="Permasalahan" v-model="permasalahan">
+                                </div>
+                                <div class="mb-3">
+                                    <textarea class="form-control" placeholder="upaya" v-model="isu"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <textarea class="form-control" placeholder="hasil" v-model="upaya"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <!-- <input type="text" class="form-control" id="recipient-name" placeholder="status" v-model="statusFlash"> -->
+                                    <div class="input-group">
+                                        <span class="input-group-text">Status</span>
+                                        <select class="form-select" aria-label="Default select example" v-model="statusFlash">
+                                            <!-- <option value="UMUM" selected>Open this select menu</option> -->
+                                            <option value="On Progres">On Progres</option>
+                                            <option value="Selesai">Selesai</option>
+
+                                            <!-- <option value="VAAS">VAAS</option>
                     <option value="LPTI">LPTI</option>
                     <option value="REKON">REKON</option> -->
-                  </select>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" @click="simpanFlash" v-if="!editData">Simpan</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updateFlash" v-else>Update</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="editData = false">Batal</button>
+                        </div>
+                    </div>
                 </div>
-              </div>
+            </div>
 
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" @click="simpanFlash" v-if="!editData">Simpan</button>
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updateFlash"
-              v-else>Update</button>
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
-              @click="editData = false">Batal</button>
-          </div>
+
+            <!-- {{flash1}}
+
+            <br><br>
+            {{dataKe}}
+            
+            <br><br>
+            {{dataFlash[0]}} -->
+
+            <div class="row mt-3">
+                <div class="col-12 ">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th style="width:9%;" scope="col">Tanggal</th>
+                                <th scope="col">Seksi</th>
+                                <th scope="col">Permasalahan</th>
+                                <th scope="col">Upaya</th>
+                                <th scope="col">Hasil</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="flash,index in HasilCari" >
+                                <th scope="row">{{index+1}}</th>
+                                <td>{{flash.tgl}}</td>
+                                <td>{{flash.seksi}}</td>
+                                <td @click="klikDetail(flash)">{{flash.permasalahan}}</td>
+                                <td @click="klikDetail(flash)">{{flash.isu}}</td>
+                                <td @click="klikDetail(flash)">{{flash.upaya}}</td>
+                                <td @click="klikDetail(flash)">{{flash.statusFlash}}</td>
+                                <td>
+                                    <h5 class="" style="margin-bottom: 0px;">
+                                        <button class="btn btn-outline btn-xs" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo" @click="editFlash(flash, index)">
+                                            <i class="bi bi-pencil text-primary"></i>
+                                        </button>
+                                        <button class="btn btn-outline btn-xs" @click="hapusFlash(flash, index)">
+                                            <i class="bi bi-trash text-danger"></i>
+                                        </button>
+                                    </h5>
+                                </td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
+<!-- tampilan utama -->
 
 
-    <!-- {{flash1}}
-
-      <br><br>
-      {{dataKe}}
-      
-      <br><br>
-      {{dataFlash[0]}} -->
-
-    <div class="row mt-3">
-      <div class="col-12 ">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Tanggal</th>
-              <th scope="col">Seksi</th>
-              <th scope="col">Permasalahan</th>
-              <th scope="col">Isu</th>
-              <th scope="col">Upaya</th>
-              <th scope="col">Status</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="flash,index in HasilCari">
-              <th scope="row">{{index+1}}</th>
-              <td>{{flash.tgl}}</td>
-              <td>{{flash.seksi}}</td>
-              <td>{{flash.permasalahan}}</td>
-              <td>{{flash.isu}}</td>
-              <td>{{flash.upaya}}</td>
-              <td>{{flash.statusFlash}}</td>
-              <td>
-                <h5 class="" style="margin-bottom: 0px;">
-                  <button class="btn btn-outline btn-xs" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                    data-bs-whatever="@mdo" @click="editFlash(flash, index)"><i
-                      class="bi bi-pencil text-primary"></i></button>
-                  <button class="btn btn-outline btn-xs" @click="hapusFlash(flash, index)"><i
-                      class="bi bi-trash text-danger"></i></button>
-                </h5>
-              </td>
-            </tr>
-            <!-- <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>@mdo</td>
-                <td>@mdo</td>
-                <td>@mdo</td>
-                <td>@mdo</td>
-                <td>@mdo</td>                    
-                <td>
-                  <h5 >
-                    <button class="btn btn-outline btn-xs"><i class="bi bi-pencil text-primary"></i></button>  
-                    <button class="btn btn-outline btn-xs"><i class="bi bi-trash text-danger"></i></button>  
-                  </h5>
-                </td>            
-
-              </tr>
-              <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-                <td>@mdo</td>
-                <td>@mdo</td>
-                <td>@mdo</td> 
-                <td>
-                  <h5 >
-                    <button class="btn btn-outline btn-xs"><i class="bi bi-pencil text-primary"></i></button>  
-                    <button class="btn btn-outline btn-xs"><i class="bi bi-trash text-danger"></i></button>  
-                  </h5>
-                </td>              
-
-              </tr> -->
-
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <br><br><br>
+        <br>
+        <br>
+        <br>
 
 
 
 
-    <!-- Optional JavaScript; choose one of the two! -->
+        <!-- Optional JavaScript; choose one of the two! -->
 
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-      crossorigin="anonymous"></script>
+        <!-- Option 1: Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
 
-    <!-- Option 2: Separate Popper and Bootstrap JS -->
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-    -->
+                <!-- Option 2: Separate Popper and Bootstrap JS -->
+                <!--
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+            -->
 
-    <!-- ajax -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <!-- ajax -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <script>
-      var app = new Vue({
-        el: '#app',
-        data() {
-          return {
-            message: 'Hello Vue!',
-            form_input: false,
-            tasks: ['Daftar Tukin', 'LS Capacity Building', 'Kuitansi Pos dan SPBU', 'Persiapn GU', 'Bayar Pajak'],
-            kegiatan: '',
-            deadline: '',
-            detail: '',
-            pic: '62',
-            namapic: '',
-            task: null,
-            tasksView: true,
-            detailView: false,
-            semua: false,
-            edit1: false,
-            urll: '',
-
-
-            editData: false,
-            dataKe: '',
-            dataFlash: [],
-            flash1: null,
-            seksi: 'pilih seksi',
-            tgl: '',
-            permasalahan: '',
-            isu: '',
-            upaya: '',
-            statusFlash: '',
-            cari: '',
-            seksiDipilih: '',
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data() {
+                    return {
+                        message: 'Hello Vue!',
+                        form_input: false,
+                        tasks: ['Daftar Tukin', 'LS Capacity Building', 'Kuitansi Pos dan SPBU', 'Persiapn GU', 'Bayar Pajak'],
+                        kegiatan: '',
+                        deadline: '',
+                        detail: '',
+                        pic: '62',
+                        namapic: '',
+                        task: null,
+                        tasksView: true,
+                        detailView: false,
+                        semua: false,
+                        edit1: false,
+                        urll: '',
 
 
+                        editData: false,
+                        dataKe: '',
+                        dataFlash: [],
+                        flash1: null,
+                        seksi: '',
+                        tgl: '',
+                        permasalahan: '',
+                        isu: '',
+                        upaya: '',
+                        statusFlash: '',
+                        cari: '',
+                        seksiDipilih: '',
+                        tambahP: false,
+                        tglProgres: '',
+                        progres: '',
+                        dataProgress: [],
+                        progress1:null,
 
 
-          }
-        },
 
-        computed: {
-          TaskAktif: function () {
-            let aktif = this.tasks.filter(product => product.status != 2)
-            let aktip = aktif.sort(function (a, b) {
-              // Turn your strings into dates, and then subtract them
-              // to get a value that is either negative, positive, or zero.
-              return new Date(a.deadline) - new Date(b.deadline);
-            });
-            return aktip
-          },
-          HasilCariSeksi: function () {
-            return this.dataFlash.filter((blog) => {
-              return blog.seksi.match(this.seksiDipilih);
+
+                    }
+                },
+
+                computed: {
+                    TaskAktif: function () {
+                        let aktif = this.tasks.filter(product => product.status != 2)
+                        let aktip = aktif.sort(function (a, b) {
+                            // Turn your strings into dates, and then subtract them
+                            // to get a value that is either negative, positive, or zero.
+                            return new Date(a.deadline) - new Date(b.deadline);
+                        });
+                        return aktip
+                    },
+                    HasilCariSeksi: function () {
+                        return this.dataFlash.filter((blog) => {
+                            return blog.seksi.match(this.seksiDipilih);
+                        })
+                    },
+                    // HasilCari(){
+                    //   return this.HasilCariSeksi;
+                    // },
+                    HasilCari: function () {
+
+                        return this.HasilCariSeksi.filter((blog) => {
+                            return blog.permasalahan.toLowerCase().match(this.cari.toLowerCase()) ||
+                                blog.isu.toLowerCase().match(this.cari.toLowerCase()) ||
+                                blog.upaya.toLowerCase().match(this.cari.toLowerCase()) ||
+                                blog.tgl.toLowerCase().match(this.cari.toLowerCase())
+                        });
+
+
+                    },
+                    pesanWA() {
+
+                        let noWA = this.task.pic;
+
+                        let keg = this.task.kegiatan.replaceAll(' ', '%20');
+                        let detailkeg = this.task.detail.replaceAll(' ', '%20');
+
+
+
+                        return `https://api.whatsapp.com/send?phone=${noWA}&text=*Kegiatan:%20${keg}*%0a%0aDetail:%20${detailkeg}`
+                    },
+                    FilterProgress: function () {
+                        return this.dataProgress.filter((blog) => {
+                            return blog.idMasalah.match(this.flash1.id);
+                        })
+                    },
+                },
+                methods: {
+                    simpanProgress() {
+                        if (this.tglProgres && this.progres) {
+                            this.loading = true;
+                            var waktu1 = Date.now();
+                            var ikegiatan = this.flash1.id.toString();
+                            var ideadline = this.tglProgres.toString();
+                            var idetail = this.progres.toString();
+
+                            // var istatus = 1;
+                            var lin = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=insert&table=progress&data={"id":${waktu1}, "idMasalah":"'${ikegiatan}","tglprogress":"'${ideadline}","progress":"'${idetail}","log":"1"}`;
+                            // this.test = lin;
+                            this.urll = lin;
+                            $.ajax({
+                                type: 'GET',
+                                url: lin,
+                                crossDomain: true,
+                                dataType: 'jsonp',
+                                dataType: "text",
+                                success: function (resultData) {
+                                    //   alert("Save Complete");
+                                    app.progres = ''
+                                    // app.isu = ''
+                                    // app.upaya = ''
+                                    // app.statusFlash = ''
+
+                                    app.dataProgress.push({
+                                        'id': waktu1,
+                                        'idMasalah': ikegiatan,
+                                        'tglprogress': ideadline,
+                                        'progress': idetail,
+                                        'log': 1,
+
+                                    });
+
+                                    // app.GetDataTasks();
+
+                                }
+                            });
+
+                            alert('Progress Berhasil di Simpan')
+
+                        }
+                        else {
+                            alert('Masih terdapat data yang belum di input')
+                        }
+                    },
+                    klikDetail(x) {
+                        this.tambahP = true;
+                        this.flash1 = x;
+                    },
+                    tambahFlash() {
+                        this.editData = false
+                        this.seksi = ''
+                        this.tgl = ''
+                        this.permasalahan = ''
+                        this.isu = ''
+                        this.upaya = ''
+                        this.statusFlash = ''
+                        this.flash1 = []
+
+                    },
+                    pilihSeksi(x) {
+                        this.seksiDipilih = x;
+                    },
+                    simpanFlash() {
+                        if (this.seksi && this.permasalahan) {
+                            this.loading = true;
+                            var waktu1 = Date.now();
+                            var ikegiatan = this.seksi.toString();
+                            var ideadline = this.tgl.toString();
+                            var idetail = this.permasalahan.toString();
+                            var ipic = this.isu.toString();
+                            var inamapic = this.upaya.toString();
+                            var istatus = this.statusFlash.toString();
+
+                            // var istatus = 1;
+                            var lin = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=insert&table=data&data={"id":${waktu1}, "seksi":"'${ikegiatan}","tgl":"'${ideadline}","permasalahan":"'${idetail}","isu":"${ipic} ","upaya":"'${inamapic}","statusFlash":"'${istatus}","log":"1"}`;
+                            // this.test = lin;
+                            this.urll = lin;
+                            $.ajax({
+                                type: 'GET',
+                                url: lin,
+                                crossDomain: true,
+                                dataType: 'jsonp',
+                                dataType: "text",
+                                success: function (resultData) {
+                                    //   alert("Save Complete");
+                                    app.permasalahan = ''
+                                    app.isu = ''
+                                    app.upaya = ''
+                                    app.statusFlash = ''
+
+                                    app.dataFlash.unshift({
+                                        'id': waktu1,
+                                        'seksi': ikegiatan,
+                                        'tgl': ideadline,
+                                        'permasalahan': idetail,
+                                        'isu': ipic,
+                                        'upaya': inamapic,
+                                        'statusFlash': istatus
+                                    });
+
+                                    // app.GetDataTasks();
+
+                                }
+                            });
+
+                            alert('Flash Harian Berhasil di Simpan')
+
+                        }
+                        else {
+                            alert('Masih terdapat data yang belum di input')
+                        }
+                    },
+                    hapusProgress (aa, index) {
+                        if (confirm("Anda yakin menghapus ?")) {
+
+                            app.dataProgress.splice(index, 1);
+                            var itimestamp = aa.id;
+
+
+                            var url1 = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=update&table=progress&id=${itimestamp}&data={"log":""}`
+                            // this.test = url;
+                            // timestamp=${itimestamp}
+                            $.ajax({
+                                type: 'GET',
+                                url: url1,
+                                crossDomain: true,
+                                dataType: 'jsonp',
+                                dataType: "text",
+                                success: function (resultData) {
+                                    // alert('Task Update Selesai')
+                                    // app.GetDataTasks();
+                                    // app.home();
+                                    app.GetDataProgress();
+                                }
+                            });
+
+
+
+                        }
+
+                    },
+
+                    hapusFlash(aa, index) {
+                        if (confirm("Anda yakin menghapus ?")) {
+
+                            app.dataFlash.splice(index, 1);
+                            // alert('update')
+                            // var waktu1 = Date.now();
+                            var itimestamp = aa.id;
+                            // console.log(itimestamp)
+                            // var url = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=delete&table=data&id=${itimestamp}`
+
+                            //   $.ajax({
+                            //   type: 'GET',
+                            //   url: url,
+                            //   crossDomain: true,
+                            //   dataType: 'jsonp',
+                            //   dataType: "text",
+                            //   success: function (resultData) {
+                            //     console.log('Flash Berhasil di hapus');
+                            //     // alert('Task Berhasil di hapus')
+                            //     // app.GetDataTasks();
+                            //     // app.home();
+                            //   }
+                            // });
+
+                            var url1 = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=update&table=data&id=${itimestamp}&data={"log":""}`
+                            // this.test = url;
+                            // timestamp=${itimestamp}
+                            $.ajax({
+                                type: 'GET',
+                                url: url1,
+                                crossDomain: true,
+                                dataType: 'jsonp',
+                                dataType: "text",
+                                success: function (resultData) {
+                                    // alert('Task Update Selesai')
+                                    // app.GetDataTasks();
+                                    // app.home();
+                                }
+                            });
+
+
+                            // this.test = url;
+                            // timestamp=${itimestamp}
+
+
+
+
+                        }
+
+                    },
+                    editFlash(x, index) {
+                        this.dataKe = index
+                        this.editData = true
+                        this.flash1 = x;
+                        this.seksi = x.seksi;
+                        this.tgl = x.tgl;
+                        this.permasalahan = x.permasalahan;
+                        this.isu = x.isu;
+                        this.upaya = x.upaya;
+                        this.statusFlash = x.statusFlash;
+                    },
+
+                    editProgress(x, index){
+                        this.dataKe = index
+                        this.editData = true
+                        this.progress1 = x;
+                        this.tglProgres = x.tglprogress;
+                        this.progres = x.progress;
+
+                    },
+                    updateProgress() {
+                        this.editData = false
+                        let dataUpdat = {
+                            'id': this.progress1.id,
+                            'idMasalah': this.progress1.idMasalah,
+                            'tglprogress': this.tglProgres,
+                            'progress': this.progres,
+                            "log": "2"
+                        }
+
+                        app.FilterProgress[this.dataKe] = dataUpdat
+
+                        // alert('update')
+                        // var waktu1 = Date.now();
+                        var waktu1 = Date.now();
+                        var ikegiatan = this.tglProgres.toString();
+                        var ideadline = this.progres.toString();
+                        // var idetail = this.permasalahan.toString();
+                        // var ipic = this.isu.toString();
+                        // var inamapic = this.upaya.toString();
+                        // var istatus = this.statusFlash.toString();
+                        var itimestamp = this.progress1.id.toString();
+                        var url = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=update&table=progress&id=${itimestamp}&data={"tglprogress":"'${ikegiatan}","progress":"'${ideadline}","log":"2"}`
+                        // this.test = url;
+                        // timestamp=${itimestamp}
+                        $.ajax({
+                            type: 'GET',
+                            url: url,
+                            crossDomain: true,
+                            dataType: 'jsonp',
+                            dataType: "text",
+                            success: function (resultData) {
+                                // alert('Progress Update Selesai')
+                                console.log('Progress Berhasil di update');
+                                app.GetDataProgress();
+                                // app.home();
+                            }
+                        });
+
+
+                    },
+
+
+
+                    updateFlash() {
+                        this.editData = false
+                        let dataUpdat = {
+                            'id': this.flash1.id,
+                            'seksi': this.seksi,
+                            'tgl': this.tgl,
+                            'permasalahan': this.permasalahan,
+                            'isu': this.isu,
+                            'upaya': this.upaya,
+                            'statusFlash': this.statusFlash,
+                            "log": "2"
+                        }
+
+                        app.HasilCari[this.dataKe] = dataUpdat
+
+                        // alert('update')
+                        // var waktu1 = Date.now();
+                        var waktu1 = Date.now();
+                        var ikegiatan = this.seksi.toString();
+                        var ideadline = this.tgl.toString();
+                        var idetail = this.permasalahan.toString();
+                        var ipic = this.isu.toString();
+                        var inamapic = this.upaya.toString();
+                        var istatus = this.statusFlash.toString();
+                        var itimestamp = this.flash1.id.toString();
+                        var url = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=update&table=data&id=${itimestamp}&data={"seksi":"'${ikegiatan}","tgl":"'${ideadline}","permasalahan":"'${idetail}","isu":"${ipic} ","upaya":"'${inamapic}","statusFlash":"'${istatus}","log":"2"}`
+                        // this.test = url;
+                        // timestamp=${itimestamp}
+                        $.ajax({
+                            type: 'GET',
+                            url: url,
+                            crossDomain: true,
+                            dataType: 'jsonp',
+                            dataType: "text",
+                            success: function (resultData) {
+                                // alert('Task Update Selesai')
+                                console.log('Flash Berhasil di update');
+                                // app.GetDataTasks();
+                                // app.home();
+                            }
+                        });
+
+
+                    },
+
+
+
+
+
+
+                    home() {
+                        this.detailView = false
+                        this.tasksView = true
+                        this.form_input = false
+                    },
+                    kliktampildetail(task) {
+                        this.task = task
+                        this.tasksView = false
+                        this.detailView = true
+                    },
+                    simpanTask() {
+                        if (this.kegiatan) {
+                            this.loading = true;
+                            var waktu1 = Date.now();
+                            var ikegiatan = this.kegiatan.toString();
+                            var ideadline = this.deadline.toString();
+                            var idetail = this.detail.toString();
+                            var ipic = this.pic.toString();
+                            var inamapic = this.namapic.toString();
+                            var istatus = 1;
+                            var lin = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=insert&table=data&data={"id":${waktu1}, "kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus} ","pic":"${ipic}","namapic":"'${inamapic}","timeupdate":"-"}`;
+                            // this.test = lin;
+                            this.urll = lin;
+                            $.ajax({
+                                type: 'GET',
+                                url: lin,
+                                crossDomain: true,
+                                dataType: 'jsonp',
+                                dataType: "text",
+                                success: function (resultData) {
+                                    //   alert("Save Complete");
+                                    app.kegiatan = ''
+                                    app.deadline = ''
+                                    app.detail = ''
+                                    app.pic = ''
+                                    app.namapic = ''
+
+                                    app.GetDataTasks();
+                                }
+                            });
+
+                            alert('Task Berhasil di Simpan')
+
+                        }
+                        else {
+                            alert('Masih terdapat data yang belum di input')
+                        }
+
+
+                    },
+
+                    TaskSelesai(aa) {
+                        // alert('update')
+                        // var waktu1 = Date.now();
+                        var itimestamp = aa.id;
+                        var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"status":"2"}`
+                        // this.test = url;
+                        // timestamp=${itimestamp}
+                        $.ajax({
+                            type: 'GET',
+                            url: url,
+                            crossDomain: true,
+                            dataType: 'jsonp',
+                            dataType: "text",
+                            success: function (resultData) {
+                                alert('Task Update Selesai')
+                                app.GetDataTasks();
+                                app.home();
+                            }
+                        });
+
+                    },
+
+                    updateTask() {
+                        // alert('update')
+                        // var waktu1 = Date.now();
+                        var waktu1 = Date.now();
+                        var ikegiatan = this.task.kegiatan.toString();
+                        var ideadline = this.task.deadline.toString();
+                        var idetail = this.task.detail.toString();
+                        var ipic = this.task.pic.toString();
+                        var inamapic = this.task.namapic.toString();
+                        var istatus = 1;
+                        var itimestamp = this.task.id.toString();
+                        var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","pic":"'${ipic}","namapic":"'${inamapic}","status":"${istatus}","timeupdate":"${waktu1}"}`
+                        // this.test = url;
+                        // timestamp=${itimestamp}
+                        $.ajax({
+                            type: 'GET',
+                            url: url,
+                            crossDomain: true,
+                            dataType: 'jsonp',
+                            dataType: "text",
+                            success: function (resultData) {
+                                alert('Task Update Selesai')
+                                app.GetDataTasks();
+                                app.home();
+                            }
+                        });
+                        this.edit1 = false;
+
+                    },
+                    updateTasknAktifkan() {
+                        // alert('update')
+                        // var waktu1 = Date.now();
+                        var waktu1 = Date.now();
+                        var ikegiatan = this.task.kegiatan.toString();
+                        var ideadline = this.task.deadline.toString();
+                        var idetail = this.task.detail.toString();
+                        var istatus = 1;
+                        var itimestamp = this.task.id.toString();
+                        var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus}","timeupdate":"${waktu1}","status":1}`
+                        // this.test = url;
+                        // timestamp=${itimestamp}
+                        $.ajax({
+                            type: 'GET',
+                            url: url,
+                            crossDomain: true,
+                            dataType: 'jsonp',
+                            dataType: "text",
+                            success: function (resultData) {
+                                alert('Task Update Selesai')
+                                app.GetDataTasks();
+                                app.home();
+                            }
+                        });
+                        this.edit1 = false;
+                    },
+
+
+
+                    GetDataFlash() {
+                        this.tasks = [];
+
+                        // var url ="https://script.google.com/macros/s/AKfycbyc7wzSrUGxQhcBN5EfVC-rNRj3wncZJOVTWAChXtSwnrHkGjoaoI91bggme_fUOIP9/exec?action=read&table=query";
+                        var url = "https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=read&table=Qdata";
+
+
+                        $.getJSON(url, function (json) {
+                            // console.log(json.data);
+                            app.dataFlash = json.data;
+                        });
+                    },
+
+
+                    GetDataProgress() {
+                        this.dataProgress = [];
+
+                        // var url ="https://script.google.com/macros/s/AKfycbyc7wzSrUGxQhcBN5EfVC-rNRj3wncZJOVTWAChXtSwnrHkGjoaoI91bggme_fUOIP9/exec?action=read&table=query";
+                        var url = "https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=read&table=Qprogress";
+
+
+                        $.getJSON(url, function (json) {
+                            // console.log(json.data);
+                            app.dataProgress = json.data;
+                        });
+                    },
+
+                    tampilkanSemua() {
+                        this.semua = !this.semua
+                    },
+                    warna(x) {
+                        if (x == 2) {
+                            return 'display-5 text-warning'
+                        } else {
+                            return 'display-5 '
+                        }
+                    }
+
+                },
+
+                created() {
+                    this.GetDataFlash();
+                    this.GetDataProgress();
+
+
+
+                }
+
+
+
+
+
             })
-          },
-          // HasilCari(){
-          //   return this.HasilCariSeksi;
-          // },
-          HasilCari: function () {
-        
-            return this.HasilCariSeksi.filter((blog) => {
-                return blog.permasalahan.toLowerCase().match(this.cari.toLowerCase()) ||
-                blog.isu.toLowerCase().match(this.cari.toLowerCase()) ||
-                blog.upaya.toLowerCase().match(this.cari.toLowerCase()) ||
-                blog.tgl.toLowerCase().match(this.cari.toLowerCase()) 
-            });
-        
 
-          },
-          pesanWA() {
 
-            let noWA = this.task.pic;
 
-            let keg = this.task.kegiatan.replaceAll(' ', '%20');
-            let detailkeg = this.task.detail.replaceAll(' ', '%20');
 
-
-
-            return `https://api.whatsapp.com/send?phone=${noWA}&text=*Kegiatan:%20${keg}*%0a%0aDetail:%20${detailkeg}`
-          }
-        },
-        methods: {
-          pilihSeksi(x) {
-            this.seksiDipilih = x;
-          },
-          simpanFlash() {
-            if (this.seksi && this.permasalahan) {
-              this.loading = true;
-              var waktu1 = Date.now();
-              var ikegiatan = this.seksi.toString();
-              var ideadline = this.tgl.toString();
-              var idetail = this.permasalahan.toString();
-              var ipic = this.isu.toString();
-              var inamapic = this.upaya.toString();
-              var istatus = this.statusFlash.toString();
-
-              // var istatus = 1;
-              var lin = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=insert&table=data&data={"id":${waktu1}, "seksi":"'${ikegiatan}","tgl":"'${ideadline}","permasalahan":"'${idetail}","isu":"${ipic} ","upaya":"'${inamapic}","statusFlash":"'${istatus}","log":"1"}`;
-              // this.test = lin;
-              this.urll = lin;
-              $.ajax({
-                type: 'GET',
-                url: lin,
-                crossDomain: true,
-                dataType: 'jsonp',
-                dataType: "text",
-                success: function (resultData) {
-                  //   alert("Save Complete");
-                  app.permasalahan = ''
-                  app.isu = ''
-                  app.upaya = ''
-                  app.statusFlash = ''
-
-                  app.dataFlash.push({
-                    'id': waktu1,
-                    'seksi': ikegiatan,
-                    'tgl': ideadline,
-                    'permasalahan': idetail,
-                    'isu': ipic,
-                    'upaya': inamapic,
-                    'statusFlash': istatus
-                  });
-
-                  // app.GetDataTasks();
-
-                }
-              });
-
-              alert('Flash Harian Berhasil di Simpan')
-
-            }
-            else {
-              alert('Masih terdapat data yang belum di input')
-            }
-          },
-
-          hapusFlash(aa, index) {
-            if (confirm("Anda yakin menghapus ?")) {
-
-              app.dataFlash.splice(index, 1);
-              // alert('update')
-              // var waktu1 = Date.now();
-              var itimestamp = aa.id;
-              // console.log(itimestamp)
-              // var url = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=delete&table=data&id=${itimestamp}`
-
-              //   $.ajax({
-              //   type: 'GET',
-              //   url: url,
-              //   crossDomain: true,
-              //   dataType: 'jsonp',
-              //   dataType: "text",
-              //   success: function (resultData) {
-              //     console.log('Flash Berhasil di hapus');
-              //     // alert('Task Berhasil di hapus')
-              //     // app.GetDataTasks();
-              //     // app.home();
-              //   }
-              // });
-
-              var url1 = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=update&table=data&id=${itimestamp}&data={"log":""}`
-              // this.test = url;
-              // timestamp=${itimestamp}
-              $.ajax({
-                type: 'GET',
-                url: url1,
-                crossDomain: true,
-                dataType: 'jsonp',
-                dataType: "text",
-                success: function (resultData) {
-                  // alert('Task Update Selesai')
-                  // app.GetDataTasks();
-                  // app.home();
-                }
-              });
-
-
-              // this.test = url;
-              // timestamp=${itimestamp}
-
-
-
-
-            }
-
-          },
-          editFlash(x, index) {
-            this.dataKe = index
-            this.editData = true
-            this.flash1 = x;
-            this.seksi = x.seksi;
-            this.tgl = x.tgl;
-            this.permasalahan = x.permasalahan;
-            this.isu = x.isu;
-            this.upaya = x.upaya;
-            this.statusFlash = x.statusFlash;
-          },
-
-
-
-          updateFlash() {
-            this.editData = false
-            let dataUpdat = {
-              'id': this.flash1.id,
-              'seksi': this.seksi,
-              'tgl': this.tgl,
-              'permasalahan': this.permasalahan,
-              'isu': this.isu,
-              'upaya': this.upaya,
-              'statusFlash': this.statusFlash,
-              "log":"2"
-            }
-
-            app.HasilCari[this.dataKe] = dataUpdat
-
-            // alert('update')
-            // var waktu1 = Date.now();
-            var waktu1 = Date.now();
-            var ikegiatan = this.seksi.toString();
-            var ideadline = this.tgl.toString();
-            var idetail = this.permasalahan.toString();
-            var ipic = this.isu.toString();
-            var inamapic = this.upaya.toString();
-            var istatus = this.statusFlash.toString();
-            var itimestamp = this.flash1.id.toString();
-            var url = `https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=update&table=data&id=${itimestamp}&data={"seksi":"'${ikegiatan}","tgl":"'${ideadline}","permasalahan":"'${idetail}","isu":"${ipic} ","upaya":"'${inamapic}","statusFlash":"'${istatus}","log":"2"}`
-            // this.test = url;
-            // timestamp=${itimestamp}
-            $.ajax({
-              type: 'GET',
-              url: url,
-              crossDomain: true,
-              dataType: 'jsonp',
-              dataType: "text",
-              success: function (resultData) {
-                // alert('Task Update Selesai')
-                console.log('Flash Berhasil di update');
-                // app.GetDataTasks();
-                // app.home();
-              }
-            });
-
-
-          },
-
-
-
-
-
-
-          home() {
-            this.detailView = false
-            this.tasksView = true
-            this.form_input = false
-          },
-          kliktampildetail(task) {
-            this.task = task
-            this.tasksView = false
-            this.detailView = true
-          },
-          simpanTask() {
-            if (this.kegiatan) {
-              this.loading = true;
-              var waktu1 = Date.now();
-              var ikegiatan = this.kegiatan.toString();
-              var ideadline = this.deadline.toString();
-              var idetail = this.detail.toString();
-              var ipic = this.pic.toString();
-              var inamapic = this.namapic.toString();
-              var istatus = 1;
-              var lin = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=insert&table=data&data={"id":${waktu1}, "kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus} ","pic":"${ipic}","namapic":"'${inamapic}","timeupdate":"-"}`;
-              // this.test = lin;
-              this.urll = lin;
-              $.ajax({
-                type: 'GET',
-                url: lin,
-                crossDomain: true,
-                dataType: 'jsonp',
-                dataType: "text",
-                success: function (resultData) {
-                  //   alert("Save Complete");
-                  app.kegiatan = ''
-                  app.deadline = ''
-                  app.detail = ''
-                  app.pic = ''
-                  app.namapic = ''
-
-                  app.GetDataTasks();
-                }
-              });
-
-              alert('Task Berhasil di Simpan')
-
-            }
-            else {
-              alert('Masih terdapat data yang belum di input')
-            }
-
-
-          },
-
-          TaskSelesai(aa) {
-            // alert('update')
-            // var waktu1 = Date.now();
-            var itimestamp = aa.id;
-            var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"status":"2"}`
-            // this.test = url;
-            // timestamp=${itimestamp}
-            $.ajax({
-              type: 'GET',
-              url: url,
-              crossDomain: true,
-              dataType: 'jsonp',
-              dataType: "text",
-              success: function (resultData) {
-                alert('Task Update Selesai')
-                app.GetDataTasks();
-                app.home();
-              }
-            });
-
-          },
-
-          updateTask() {
-            // alert('update')
-            // var waktu1 = Date.now();
-            var waktu1 = Date.now();
-            var ikegiatan = this.task.kegiatan.toString();
-            var ideadline = this.task.deadline.toString();
-            var idetail = this.task.detail.toString();
-            var ipic = this.task.pic.toString();
-            var inamapic = this.task.namapic.toString();
-            var istatus = 1;
-            var itimestamp = this.task.id.toString();
-            var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","pic":"'${ipic}","namapic":"'${inamapic}","status":"${istatus}","timeupdate":"${waktu1}"}`
-            // this.test = url;
-            // timestamp=${itimestamp}
-            $.ajax({
-              type: 'GET',
-              url: url,
-              crossDomain: true,
-              dataType: 'jsonp',
-              dataType: "text",
-              success: function (resultData) {
-                alert('Task Update Selesai')
-                app.GetDataTasks();
-                app.home();
-              }
-            });
-            this.edit1 = false;
-
-          },
-          updateTasknAktifkan() {
-            // alert('update')
-            // var waktu1 = Date.now();
-            var waktu1 = Date.now();
-            var ikegiatan = this.task.kegiatan.toString();
-            var ideadline = this.task.deadline.toString();
-            var idetail = this.task.detail.toString();
-            var istatus = 1;
-            var itimestamp = this.task.id.toString();
-            var url = `https://script.google.com/macros/s/AKfycbzfOmAEsUqWORVFgVgp3-juYufE-2xrp5hn85E2hZT0hXLw8_Ur-9sxY1eCDQLo8mJI/exec?action=update&table=data&id=${itimestamp}&data={"kegiatan":"'${ikegiatan}","deadline":"'${ideadline}","detail":"'${idetail}","status":"${istatus}","timeupdate":"${waktu1}","status":1}`
-            // this.test = url;
-            // timestamp=${itimestamp}
-            $.ajax({
-              type: 'GET',
-              url: url,
-              crossDomain: true,
-              dataType: 'jsonp',
-              dataType: "text",
-              success: function (resultData) {
-                alert('Task Update Selesai')
-                app.GetDataTasks();
-                app.home();
-              }
-            });
-            this.edit1 = false;
-          },
-
-
-
-          GetDataFlash() {
-            this.tasks = [];
-
-            // var url ="https://script.google.com/macros/s/AKfycbyc7wzSrUGxQhcBN5EfVC-rNRj3wncZJOVTWAChXtSwnrHkGjoaoI91bggme_fUOIP9/exec?action=read&table=query";
-            var url = "https://script.google.com/macros/s/AKfycbyZFjDBgwz2oE_pEwKb3dW8GQsAm1snHxYpFIQZFFVIN7Ur3y6nhQ1hDYXJWvX5xSJZNw/exec?action=read&table=Qdata";
-
-
-            $.getJSON(url, function (json) {
-              // console.log(json.data);
-              app.dataFlash = json.data;
-            });
-          },
-
-          tampilkanSemua() {
-            this.semua = !this.semua
-          },
-          warna(x) {
-            if (x == 2) {
-              return 'display-5 text-warning'
-            } else {
-              return 'display-5 '
-            }
-          }
-
-        },
-
-        created() {
-          this.GetDataFlash();
-
-
-
-        }
-
-
-
-
-
-      })
-
-
-
-
-    </script>
+        </script>
 </body>
 
 </html>
