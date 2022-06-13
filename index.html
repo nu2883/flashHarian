@@ -220,20 +220,35 @@
     <div class="utama" v-else>
       <div class="row">
         <div class="col-9">
-          <button type="button" class="btn btn-outline-primary mt-1" @click="pilihSeksi('UMUM'); halaman=1;">
-            <b>UMUM ({{jUmum}})</b>
+          <button style="margin-right:13px;" type="button" class="btn  btn-outline-primary mt-1 position-relative" @click="pilihSeksi('UMUM'); halaman=1;">
+            <b>UMUM </b>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
+                {{jUmum}}
+            </span>    
           </button>
-          <button type="button" class="btn btn-outline-secondary mt-1" @click="pilihSeksi('P dan KI'); halaman=1;">
-            <b> P & KI ({{jPnki}})</b>
+          <button style="margin-right:13px;"type="button" class="btn  btn-outline-secondary mt-1 position-relative" @click="pilihSeksi('P dan KI'); halaman=1;">
+            <b> P & KI </b>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary">
+                {{jPnki}}
+            </span>    
           </button>
-          <button type="button" class="btn btn-outline-success mt-1" @click="pilihSeksi('VAAS'); halaman=1;">
-            <b> VAAS ({{jVaas}}) </b>
+          <button style="margin-right:13px;"type="button" class="btn  btn-outline-success mt-1 position-relative" @click="pilihSeksi('VAAS'); halaman=1;">
+            <b> VAAS  </b>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
+                {{jVaas}}
+            </span>    
           </button>
-          <button type="button" class="btn btn-outline-warning mt-1" @click="pilihSeksi('LPTI'); halaman=1;">
-            <b> LPTI ({{jLpti}})</b>
+          <button style="margin-right:13px;"type="button" class="btn  btn-outline-warning mt-1 position-relative" @click="pilihSeksi('LPTI'); halaman=1;">
+            <b> LPTI </b>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
+                {{jLpti}}
+            </span>    
           </button>
-          <button type="button" class="btn btn-outline-info mt-1" @click="pilihSeksi('REKON'); halaman=1;">
-            <b> REKON ({{jReko}})</b>
+          <button style="margin-right:13px;"type="button" class="btn  btn-outline-info mt-1 position-relative" @click="pilihSeksi('REKON'); halaman=1;">
+            <b> REKON </b>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
+                {{jReko}}
+            </span>    
           </button>
         </div>
         <div class="col-3">
@@ -341,7 +356,7 @@
                 <th scope="col">Upaya</th>
                 <th scope="col">Hasil</th>
                 <th scope="col">Status</th>
-                <th scope="col">Action</th>
+                <th style="width: 10%" scope="col">Action</th>
               </tr>
             </thead>
             <tbody v-if="dataFlash.length > 0">
@@ -379,7 +394,7 @@
             <div class="col-5">
               from {{from+1}} to <span v-if="to <= HasilCari.length">{{to}}</span> <span v-else>{{HasilCari.length}}</span> of {{HasilCari.length}}
             </div>
-            <div class="col-6">
+            <div class="col-6 d-flex justify-content-end">
               <nav aria-label="Page navigation example">
                 <ul class="pagination">
                   <li class="page-item" v-if="halaman != 1" @click="halaman-=1"><span class="page-link" href="#">Previous</span></li>
