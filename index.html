@@ -330,7 +330,7 @@
               </form>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" @click="simpanFlash" v-if="!editData">
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="simpanFlash" v-if="!editData">
                 Simpan
               </button>
               <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="updateFlash" v-else>
@@ -674,7 +674,7 @@
               },
             });
 
-            alert("Flash Harian Berhasil di Simpan");
+            // alert("Flash Harian Berhasil di Simpan");
           } else {
             alert("Masih terdapat data yang belum di input");
           }
